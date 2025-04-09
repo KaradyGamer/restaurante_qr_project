@@ -34,17 +34,6 @@ python3 -m venv env
 source env/bin/activate
 ```
 ---
-## 3. Instala las dependencias:
-
-```bash
-python -m venv env
-env/bin/activate
-```
-**Si aún no tienes el archivo requirements.txt, puedes generarlo así:**
-```bash
-pip freeze > requirements.txt
-```
----
 # Instalcion de requerimientos
 
 ## ✅ Cómo crearlo
