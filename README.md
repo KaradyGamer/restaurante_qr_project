@@ -14,6 +14,8 @@ Asegúrate de tener instalado:
 ---
 
 ## ⚙️ Instalación del entorno (desarrollo local)
+- crear una carpeta
+- clip derecho en la carpeta y abrir terminal
 
 1. **Clona el repositorio:**
 
@@ -22,6 +24,7 @@ git clone https://github.com/KaradyGamer/restaurante_qr_project.git
 cd restaurante_qr_project
 ```
 2. **Crear y activa un entrono virtual**
+- dentro de la carpeta en visual Code
 
 **Windows**
 ```bash
