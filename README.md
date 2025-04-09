@@ -66,7 +66,7 @@ pip install -r requirements.txt
 python manage.py makemigrations
 python manage.py migrate
 ```
-**2. crea un superusuario()**
+**2. crea un superusuario(opcional)**
 ```bash
 python manage.py createsuperuser
 ```
