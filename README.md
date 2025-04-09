@@ -15,13 +15,13 @@ Asegúrate de tener instalado:
 
 ## ⚙️ Instalación del entorno (desarrollo local)
 
-1. **Clona el repositorio:**
+### 1. Clona el repositorio:
 
 ```bash
 git clone https://github.com/KaradyGamer/restaurante_qr_project.git
 cd restaurante_qr_project
 ```
-2. Crear y activa un entrono virtual
+###2. Crear y activa un entrono virtual
 **Windows**
 ```bash
 python -m venv env
@@ -42,20 +42,20 @@ source env/bin/activate
 pip freeze > requirements.txt
 ```
 # 🛠️ Configuración inicial
-**1. Aplica migraciones**
+### 1. Aplica migraciones
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
-**2. crea un superusuario()**
+### 2. crea un superusuario()
 ```bash
 python manage.py createsuperuser
 ```
-**3. Ejecuta el servidor:**
+### 3. Ejecuta el servidor:
 ```bash
 python manage.py runserver
 ```
-**4. Accede en tu navegador**
+### 4. Accede en tu navegador
 
 - Cliente: http://127.0.0.1:8000/menu/
 
@@ -85,11 +85,6 @@ restaurante_qr_project/
 
 - 📦 API protegida con JWT (para futuros módulos internos)
 
-## 📌 Notas
-- Si usas VSCode, selecciona el intérprete correcto (.venv/Scripts/python.exe).
-
-- Este proyecto aún está en desarrollo. Próximamente: pagos, roles por personal y cocina.
-
 ---
 
 # Instalcion de requerimientos
@@ -114,3 +109,8 @@ django-filter==24.1
 pip install -r requirements.txt
 ```
 Y listo, tendrá todo lo necesario para correr tu proyecto 🎯
+
+## 📌 Notas
+- Si usas VSCode, selecciona el intérprete correcto (.venv/Scripts/python.exe).
+
+- Este proyecto aún está en desarrollo. Próximamente: pagos, roles por personal y cocina.
