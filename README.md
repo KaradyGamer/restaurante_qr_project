@@ -89,3 +89,28 @@ restaurante_qr_project/
 - Si usas VSCode, selecciona el intérprete correcto (.venv/Scripts/python.exe).
 
 - Este proyecto aún está en desarrollo. Próximamente: pagos, roles por personal y cocina.
+
+---
+
+# Instalcion de requerimientos
+
+## ✅ Cómo crearlo
+**Abre tu terminal con el entorno virtual activado y ejecuta:**
+```bash
+pip freeze > requirements.txt
+```
+**Esto generará un archivo requirements.txt como este (ejemplo):**
+```bash
+Django==5.2
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==24.1
+```
+---
+## ✅ Cómo instalarlo
+**Una vez que otro integrante clone tu repositorio, solo tiene que hacer esto dentro del entorno virtual:**
+```bash
+pip install -r requirements.txt
+```
+Y listo, tendrá todo lo necesario para correr tu proyecto 🎯
