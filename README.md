@@ -44,6 +44,33 @@ env/bin/activate
 ```bash
 pip freeze > requirements.txt
 ```
+---
+# Instalcion de requerimientos
+
+## ✅ Cómo crearlo
+**Abre tu terminal con el entorno virtual activado y ejecuta:**
+
+```bash
+pip freeze > requirements.txt
+```
+**Esto generará un archivo requirements.txt como este (ejemplo):**
+
+```bash
+Django==5.2
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==24.1
+```
+---
+## ✅ Cómo instalarlo
+
+**Una vez que otro integrante clone tu repositorio, solo tiene que hacer esto dentro del entorno virtual:**
+
+```bash
+pip install -r requirements.txt
+```
+---
 # 🛠️ Configuración inicial
 **1. Aplica migraciones**
 ```bash
@@ -90,32 +117,6 @@ restaurante_qr_project/
 
 ---
 
-# Instalcion de requerimientos
-
-## ✅ Cómo crearlo
-**Abre tu terminal con el entorno virtual activado y ejecuta:**
-
-```bash
-pip freeze > requirements.txt
-```
-**Esto generará un archivo requirements.txt como este (ejemplo):**
-
-```bash
-Django==5.2
-djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.1
-django-cors-headers==4.3.1
-django-filter==24.1
-```
----
-## ✅ Cómo instalarlo
-
-**Una vez que otro integrante clone tu repositorio, solo tiene que hacer esto dentro del entorno virtual:**
-
-```bash
-pip install -r requirements.txt
-```
----
 ## 📌 Notas
 
 - Si usas VSCode, selecciona el intérprete correcto (.venv/Scripts/python.exe).
