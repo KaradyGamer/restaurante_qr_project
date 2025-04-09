@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmar Pedido</title>
+    <link rel="stylesheet" href="/static/css/formulario.css">
+</head>
+<body>
+    <h1>Confirmar Pedido</h1>
+
+    <form action="/api/pedidos/cliente/" method="POST">
+        <label>Nombre:</label>
+        <input type="text" name="nombre" required>
+
+        <label>Mesa:</label>
+        <input type="number" name="mesa" required>
+
+        <label>Método de pago:</label>
+        <select name="pago" required>
+            <option value="">Selecciona</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="qr">QR</option>
+        </select>
+
+        <!-- Aquí podrías mostrar los productos seleccionados con JS o Django -->
+
+        <button type="submit">Enviar Pedido</button>
+    </form>
+</body>
+</html>
