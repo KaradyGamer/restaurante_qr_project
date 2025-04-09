@@ -55,9 +55,37 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
-git add README.md
-git commit -m "Agregado archivo README con instrucciones"
-git push origin main
-```
+**4. Accede en tu navegador**
 
-¿Te gustaría que te dé también el contenido de `requirements.txt` basado en lo que ya tienes instalado?
+- Cliente: http://127.0.0.1:8000/menu/
+
+- Admin: http://127.0.0.1:8000/admin/
+
+## 📁 Estructura del proyecto
+```bash
+restaurante_qr_project/
+├── app/
+├── backend/
+├── frontend/
+├── media/
+├── static/
+├── db.sqlite3
+├── .gitignore
+├── manage.py
+└── requirements.txt
+```
+## ✨ Características actuales
+- 📱 Escaneo QR → Menú web del restaurante
+
+- 🛒 Selección de productos y envío del pedido
+
+- 🧾 Formulario para confirmar datos del cliente
+
+- 🔐 Panel administrativo Django
+
+- 📦 API protegida con JWT (para futuros módulos internos)
+
+## 📌 Notas
+- Si usas VSCode, selecciona el intérprete correcto (.venv/Scripts/python.exe).
+
+- Este proyecto aún está en desarrollo. Próximamente: pagos, roles por personal y cocina.
