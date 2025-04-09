@@ -37,7 +37,7 @@ source env/bin/activate
 ## 3. Instala las dependencias:
 
 ```bash
-python3 -m venv env
+python -m venv env
 source env/bin/activate
 ```
 **Si aún no tienes el archivo requirements.txt, puedes generarlo así:**
