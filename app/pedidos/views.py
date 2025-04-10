@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.shortcuts import render
 from django.utils import timezone
 
@@ -10,12 +11,26 @@ from .serializers import PedidoSerializer
 from app.mesas.models import Mesa
 from app.productos.models import Producto
 
+from app.usuarios.utils import rol_requerido
+from app.usuarios.permisos import EsCocinero  # ✅ CAMBIO AQUÍ
 
-# 🌐 Vista HTML para formulario web del cliente
+
+# 🔐 ViewSet solo accesible por cocineros
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all().order_by('-fecha')
+    serializer_class = PedidoSerializer
+    permission_classes = [EsCocinero]  # ✅ CORRECTO
+
+
+# 🔐 Vista protegida para meseros (HTML)
+@rol_requerido('mesero')
+def vista_para_meseros(request):
+    return render(request, 'mesero_panel.html')
+
+
+# 🌐 Vista HTML para formulario del cliente
 def formulario_cliente(request):
     productos_seleccionados = {}
-
-    # Detectamos productos pasados por GET
     for key, value in request.GET.items():
         if key.startswith("producto_") and int(value) > 0:
             productos_seleccionados[key] = int(value)
@@ -30,14 +45,7 @@ def menu_cliente(request):
     return render(request, 'cliente/menu.html')
 
 
-# 🔐 Vista protegida para personal (requiere login)
-class PedidoViewSet(viewsets.ModelViewSet):
-    queryset = Pedido.objects.all().order_by('-fecha')
-    serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticated]
-
-
-# 🔓 Vista pública para crear pedido desde cliente
+# 🔓 Vista pública para crear pedidos desde el cliente
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def crear_pedido_cliente(request):
@@ -77,3 +85,13 @@ def crear_pedido_cliente(request):
         return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# 🍽️ Vista API exclusiva para cocineros
+class PedidosEnCocinaAPIView(APIView):
+    permission_classes = [EsCocinero]  # ✅ CORRECTO
+
+    def get(self, request):
+        pedidos = Pedido.objects.all().order_by('-fecha')  # Podés agregar filtro por estado
+        serializer = PedidoSerializer(pedidos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

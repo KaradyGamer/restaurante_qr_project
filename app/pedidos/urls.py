@@ -5,6 +5,7 @@ from .views import (
     crear_pedido_cliente,
     formulario_cliente,
     menu_cliente,
+    PedidosEnCocinaAPIView
 )
 
 # 🔐 Rutas para personal (con login)
@@ -15,6 +16,7 @@ router.register(r'', PedidoViewSet)
 urlpatterns = [
     # Rutas API
     path('cliente/', crear_pedido_cliente),   # 🔓 API pública para crear pedidos
+    path('en-cocina/', PedidosEnCocinaAPIView.as_view(), name='pedidos-en-cocina'),  # 👈 NUEVO ENDPOINT
     path('', include(router.urls)),           # 🔐 CRUD API para staff
 
     # Rutas HTML (cliente)
