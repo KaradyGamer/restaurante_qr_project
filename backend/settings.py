@@ -15,10 +15,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     # Apps externas
     'rest_framework',
     'django_filters',
     'corsheaders',
+
     # Apps del proyecto
     'app.usuarios',
     'app.mesas',
@@ -44,7 +46,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'frontend' / 'interfaz'],
+        'DIRS': [BASE_DIR / 'frontend' / 'interfaz'],  # Aquí van los HTML
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,14 +77,17 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # 🌍 Internacionalización
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'es-pe'
+TIME_ZONE = 'America/Lima'
 USE_I18N = True
+USE_L10N = True
 USE_TZ = True
 
 # 🖼️ Archivos estáticos y multimedia
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontend', 'static')]
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'frontend', 'static'),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -91,7 +96,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # 👤 Usuario personalizado
-AUTH_USER_MODEL = 'usuarios.Usuario'  # ✅ CORRECTO
+AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # 🌐 CORS
 CORS_ALLOW_ALL_ORIGINS = True
