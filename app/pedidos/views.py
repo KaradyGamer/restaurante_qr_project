@@ -13,6 +13,10 @@ from app.productos.models import Producto
 from app.usuarios.utils import rol_requerido
 from app.usuarios.permisos import EsCocinero
 
+from app.usuarios.permisos import EsMesero  # asegúrate de tener este permiso
+
+
+
 
 # 🔐 ViewSet solo accesible por cocineros
 class PedidoViewSet(viewsets.ModelViewSet):
@@ -22,9 +26,13 @@ class PedidoViewSet(viewsets.ModelViewSet):
 
 
 # 🔐 Vista protegida para meseros (HTML)
+
+def login_mesero(request):
+    return render(request, 'mesero/login.html')
+
 @rol_requerido('mesero')
 def vista_para_meseros(request):
-    return render(request, 'mesero_panel.html')
+    return render(request, 'mesero/mesero.html')
 
 
 # 🌐 Vista HTML para formulario del cliente
@@ -121,3 +129,19 @@ def actualizar_estado_pedido(request, pedido_id):
 def panel_cocina(request):
     pedidos = Pedido.objects.all().order_by('-fecha')
     return render(request, 'cocinero/panel.html', {'pedidos': pedidos})
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, EsMesero])
+def pedidos_por_mesa(request):
+    mesas = Mesa.objects.all()
+    data = []
+
+    for mesa in mesas:
+        pedidos = Pedido.objects.filter(mesa=mesa).order_by('-fecha')
+        if pedidos.exists():
+            data.append({
+                "numero": mesa.numero,
+                "pedidos": PedidoSerializer(pedidos, many=True).data
+            })
+
+    return Response(data)

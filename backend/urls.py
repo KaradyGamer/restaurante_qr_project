@@ -16,11 +16,14 @@ urlpatterns = [
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # 📦 APIs de la app
+    # 📦 APIs
     path('api/usuarios/', include('app.usuarios.urls')),
     path('api/pedidos/', include('app.pedidos.urls')),
+
+    # 🌐 Vistas HTML para mesero, cocinero, etc.
+    path('', include('app.pedidos.urls')),  # 👈 ESTA es la línea que faltaba
 ]
 
-# 🧾 Archivos media (solo para desarrollo)
+# 🧾 Archivos media (solo en modo desarrollo)
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

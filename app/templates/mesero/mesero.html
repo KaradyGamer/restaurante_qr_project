@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel del Mesero</title>
+  <link rel="stylesheet" href="/static/css/panel_mesero.css">
+</head>
+<body>
+  <h1>🧾 Panel del Mesero</h1>
+  <button onclick="cerrarSesion()" style="float: right;">Cerrar sesión</button>
+  <div id="mesas-container"></div>
+
+  <script>
+    const API_URL = "/api/pedidos/mesero/";
+    const token = localStorage.getItem("token_mesero");
+    const container = document.getElementById("mesas-container");
+
+    if (!token) {
+      alert("No estás autenticado. Redirigiendo...");
+      window.location.href = "/mesero/login/";
+    }
+
+    function cargarPedidos() {
+      fetch(API_URL, {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        container.innerHTML = "";
+        data.forEach(mesa => {
+          const div = document.createElement("div");
+          div.className = "mesa";
+          div.innerHTML = `<h2>🪑 Mesa #${mesa.numero}</h2>`;
+          
+          mesa.pedidos.forEach(pedido => {
+            const pedidoDiv = document.createElement("div");
+            pedidoDiv.className = `pedido ${pedido.estado.toLowerCase()}`;
+            pedidoDiv.innerHTML = `
+              <p>Pedido ID: ${pedido.id}</p>
+              <p>Estado: ${pedido.estado}</p>
+              <button onclick="marcarEntregado(${pedido.id})">✅ Marcar como entregado</button>
+            `;
+            div.appendChild(pedidoDiv);
+          });
+
+          container.appendChild(div);
+        });
+      });
+    }
+
+    function marcarEntregado(idPedido) {
+      fetch(`/api/pedidos/actualizar/${idPedido}/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ estado: "ENTREGADO" })
+      }).then(() => cargarPedidos());
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("token_mesero");
+      window.location.href = "/mesero/login/";
+    }
+
+    cargarPedidos();
+    setInterval(cargarPedidos, 10000);
+  </script>
+</body>
+</html>

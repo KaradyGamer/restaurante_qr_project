@@ -7,6 +7,13 @@ class EsRol(BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.rol == self.rol
 
+from rest_framework.permissions import BasePermission
+
+class EsMesero(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.rol == 'MESERO'
+
+
 # Subclases específicas por cada rol
 class EsCocinero(EsRol):
     rol = 'cocinero'
