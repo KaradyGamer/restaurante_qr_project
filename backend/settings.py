@@ -1,7 +1,7 @@
 from pathlib import Path
 import os
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = 'django-insecure-s73x)44l8lx+!hkv!(3ko3@51et@dr)o3cy_ul88ru%qvp5bdr'
 DEBUG = True
@@ -46,7 +46,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'frontend' / 'interfaz'],  # Aquí van los HTML
+        'DIRS': [BASE_DIR / 'templates'],  # Aquí van los HTML
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,9 +85,12 @@ USE_TZ = True
 
 # 🖼️ Archivos estáticos y multimedia
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'frontend', 'static'),
+    os.path.join(BASE_DIR, 'frontend', 'static'),  # ✅ Directorio fuente (CSS, JS, imágenes)
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # ✅ Recolector de estáticos (para producción con collectstatic)
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

@@ -1,59 +1,31 @@
+from django.shortcuts import render
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import render
-from django.utils import timezone
 
 from .models import Pedido, DetallePedido
 from .serializers import PedidoSerializer
 from app.mesas.models import Mesa
 from app.productos.models import Producto
 from app.usuarios.utils import rol_requerido
-from app.usuarios.permisos import EsCocinero
+from app.usuarios.permisos import EsCocinero, EsMesero
 
-from app.usuarios.permisos import EsMesero  # asegúrate de tener este permiso
+# ──────────────────────────────────────────────
+# 🔓 Cliente – Plantillas públicas
+# ──────────────────────────────────────────────
 
-
-
-
-# 🔐 ViewSet solo accesible por cocineros
-class PedidoViewSet(viewsets.ModelViewSet):
-    queryset = Pedido.objects.all().order_by('-fecha')
-    serializer_class = PedidoSerializer
-    permission_classes = [EsCocinero]
-
-
-# 🔐 Vista protegida para meseros (HTML)
-
-def login_mesero(request):
-    return render(request, 'mesero/login.html')
-
-@rol_requerido('mesero')
-def vista_para_meseros(request):
-    return render(request, 'mesero/mesero.html')
-
-
-# 🌐 Vista HTML para formulario del cliente
 def formulario_cliente(request):
     return render(request, 'cliente/formulario.html')
 
-
-# 🌐 Vista HTML para menú del cliente
 def menu_cliente(request):
     return render(request, 'cliente/menu.html')
 
-
-# ✅ Vista HTML de éxito luego de pedido
 def vista_exito(request):
     return render(request, 'cliente/exito.html')
 
-def login_cocinero(request):
-    return render(request, 'cocinero/login.html')
-
-
-# 🔓 Vista pública para crear pedidos desde el cliente (modificada)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def crear_pedido_cliente(request):
@@ -86,7 +58,6 @@ def crear_pedido_cliente(request):
         pedido.total = total
         pedido.save()
 
-        # 👇 En vez de redirect, devolvemos un JSON para que JS redireccione
         return Response({'mensaje': 'Pedido creado exitosamente', 'pedido_id': pedido.id}, status=status.HTTP_201_CREATED)
 
     except Mesa.DoesNotExist:
@@ -96,8 +67,38 @@ def crear_pedido_cliente(request):
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+# ──────────────────────────────────────────────
+# 👨‍🍳 Cocinero – Vistas HTML protegidas
+# ──────────────────────────────────────────────
 
-# 🍽️ Vista API exclusiva para cocineros
+@rol_requerido('cocinero')
+def login_cocinero(request):
+    return render(request, 'cocinero/login.html')
+
+@rol_requerido('cocinero')
+def panel_cocina(request):
+    pedidos = Pedido.objects.all().order_by('-fecha')
+    return render(request, 'cocinero/panel.html', {'pedidos': pedidos})
+
+
+# ──────────────────────────────────────────────
+# 🧾 Mesero – Vistas HTML protegidas
+# ──────────────────────────────────────────────
+
+@rol_requerido('mesero')
+def login_mesero(request):
+    return render(request, 'mesero/login.html')
+
+@rol_requerido('mesero')
+def vista_para_meseros(request):
+    return render(request, 'mesero/mesero.html')
+
+
+# ──────────────────────────────────────────────
+# 🔐 API protegida por roles
+# ──────────────────────────────────────────────
+
+# Cocinero: API para ver pedidos
 class PedidosEnCocinaAPIView(APIView):
     permission_classes = [EsCocinero]
 
@@ -106,8 +107,24 @@ class PedidosEnCocinaAPIView(APIView):
         serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+# Mesero: Ver pedidos por mesa
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, EsMesero])
+def pedidos_por_mesa(request):
+    mesas = Mesa.objects.all()
+    data = []
 
-# 🔄 Endpoint para actualizar el estado del pedido
+    for mesa in mesas:
+        pedidos = Pedido.objects.filter(mesa=mesa).order_by('-fecha')
+        if pedidos.exists():
+            data.append({
+                "numero": mesa.numero,
+                "pedidos": PedidoSerializer(pedidos, many=True).data
+            })
+
+    return Response(data)
+
+# Cocinero: Actualizar estado del pedido
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 def actualizar_estado_pedido(request, pedido_id):
@@ -125,23 +142,9 @@ def actualizar_estado_pedido(request, pedido_id):
     except Pedido.DoesNotExist:
         return Response({'error': 'Pedido no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-@rol_requerido('cocinero')  # o 'mesero' si lo estás usando así
-def panel_cocina(request):
-    pedidos = Pedido.objects.all().order_by('-fecha')
-    return render(request, 'cocinero/panel.html', {'pedidos': pedidos})
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, EsMesero])
-def pedidos_por_mesa(request):
-    mesas = Mesa.objects.all()
-    data = []
-
-    for mesa in mesas:
-        pedidos = Pedido.objects.filter(mesa=mesa).order_by('-fecha')
-        if pedidos.exists():
-            data.append({
-                "numero": mesa.numero,
-                "pedidos": PedidoSerializer(pedidos, many=True).data
-            })
-
-    return Response(data)
+# 🔄 CRUD completo (opcional si usas routers)
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all().order_by('-fecha')
+    serializer_class = PedidoSerializer
+    permission_classes = [EsCocinero]
