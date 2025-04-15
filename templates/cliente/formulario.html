@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Pedido</title>
+    <link rel="stylesheet" href="/static/css/formulario.css">
+</head>
+<body>
+    <h1>Realiza tu Pedido</h1>
+
+    <!-- 📝 FORMULARIO - PASO 1 -->
+    <form id="paso-1">
+        <label for="mesa">Número de Mesa:</label>
+        <input type="number" id="mesa" required>
+
+        <div id="productos">
+            <h3>Productos</h3>
+            <div class="producto">
+                <label>Sopa de Mariscos</label>
+                <input type="number" min="0" value="0" data-id="1">
+            </div>
+            <div class="producto">
+                <label>Coca Cola L3</label>
+                <input type="number" min="0" value="0" data-id="2">
+            </div>
+        </div>
+
+        <label for="forma_pago">Forma de pago:</label>
+        <select id="forma_pago" name="forma_pago" required>
+            <option value="efectivo">Efectivo</option>
+            <option value="qr">QR</option>
+            <option value="tarjeta">Tarjeta</option>
+        </select>
+
+        <button type="submit">Siguiente</button>
+    </form>
+
+    <!-- ✅ CONFIRMACIÓN - PASO 2 -->
+    <div id="paso-2" style="display: none;">
+        <h3>Confirmación de Pedido</h3>
+        <p><strong>Mesa:</strong> <span id="resumen-mesa"></span></p>
+        <ul id="resumen-productos"></ul>
+        <p><strong>Pago:</strong> <span id="resumen-pago"></span></p>
+
+        <button id="btn-volver">Volver a Editar</button>
+        <button id="btn-confirmar">Confirmar Pedido</button>
+    </div>
+
+    <script>
+        const paso1 = document.getElementById('paso-1');
+        const paso2 = document.getElementById('paso-2');
+        const resumenMesa = document.getElementById('resumen-mesa');
+        const resumenProductos = document.getElementById('resumen-productos');
+        const resumenPago = document.getElementById('resumen-pago');
+
+        let mesa, detalles, formaPago;
+
+        // 👉 PASO 1 - Siguiente
+        paso1.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            mesa = document.getElementById('mesa').value;
+            formaPago = document.getElementById('forma_pago').value;
+            detalles = [];
+
+            const productos = document.querySelectorAll('.producto input');
+            productos.forEach(input => {
+                const cantidad = parseInt(input.value);
+                const id = parseInt(input.dataset.id);
+                const nombre = input.previousElementSibling.innerText;
+
+                if (cantidad > 0) {
+                    detalles.push({ producto: id, cantidad, nombre });
+                }
+            });
+
+            if (!mesa || detalles.length === 0) {
+                alert("Debes ingresar el número de mesa y al menos un producto.");
+                return;
+            }
+
+            resumenMesa.innerText = mesa;
+            resumenProductos.innerHTML = '';
+            resumenPago.innerText = formaPago;
+
+            detalles.forEach(p => {
+                const li = document.createElement('li');
+                li.innerText = `${p.nombre} x${p.cantidad}`;
+                resumenProductos.appendChild(li);
+            });
+
+            paso1.style.display = 'none';
+            paso2.style.display = 'block';
+        });
+
+        // 🔁 Volver
+        document.getElementById('btn-volver').addEventListener('click', function () {
+            paso1.style.display = 'block';
+            paso2.style.display = 'none';
+        });
+
+        // 🚀 Confirmar Pedido
+        document.getElementById('btn-confirmar').addEventListener('click', function () {
+            fetch('http://127.0.0.1:8000/api/pedidos/cliente/crear/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    mesa: mesa,
+                    detalles: detalles.map(p => ({ producto: p.producto, cantidad: p.cantidad })),
+                    forma_pago: formaPago
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.pedido_id) {
+                    window.location.href = "/exito/";  // Redirige a la página de éxito
+                } else {
+                    alert(data.error || "Ocurrió un error");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
